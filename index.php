@@ -37,6 +37,8 @@ if ($selectedChatId) {
 
     // purge allowed for admins or owners
     $canPurge = $isOwner || !empty($u['is_admin']);
+    // edit allowed for admins or chat creators
+    $canEdit = !empty($u['is_admin']) || ((int)($chat['created_by_user_id'] ?? 0) === (int)$u['id']);
 
     // messages (only show if member)
     if ($isMember) {
@@ -142,6 +144,9 @@ header_html('Home');
           <strong><?=h($chat['title'])?></strong>
         </div>
         <div style="display:flex; gap:8px;">
+          <?php if (!empty($canEdit)): ?>
+            <a class="button secondary" href="/index.php?chat=<?=h((string)$chat['id'])?>&edit=1">Edit</a>
+          <?php endif; ?>
           <?php if ($isMember): ?>
             <button type="button" class="button secondary" id="open-members">Members</button>
             <form method="post" action="/chat_leave.php">
@@ -160,6 +165,29 @@ header_html('Home');
         </div>
       </div>
       <div class="content-body">
+        <?php
+          $showEdit = !empty($canEdit) && !empty($_GET['edit']);
+          if ($showEdit):
+        ?>
+          <div class="card" style="margin-bottom:12px;">
+            <h3>Edit Chat</h3>
+            <form method="post" class="stack" action="/chat_update.php">
+              <input type="hidden" name="csrf" value="<?=h(csrf_token())?>">
+              <input type="hidden" name="chat_id" value="<?=h((string)$chat['id'])?>">
+              <label>Title
+                <input type="text" name="title" value="<?=h($chat['title'])?>" maxlength="255" required>
+              </label>
+              <label>Description
+                <textarea name="description" placeholder="Optional"><?=h($chat['description'])?></textarea>
+              </label>
+              <div style="display:flex; gap:8px;">
+                <button class="button">Save</button>
+                <a class="button secondary" href="/index.php?chat=<?=h((string)$chat['id'])?>">Cancel</a>
+              </div>
+            </form>
+          </div>
+        <?php endif; ?>
+
         <?php if (!empty($chat['description'])): ?>
           <p class="small" style="color:var(--muted);"><?=nl2br(h($chat['description']))?></p>
           <hr>
