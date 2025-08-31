@@ -232,6 +232,8 @@ button:active, .button:active{ transform: translateY(1px); }
 .msg-row{
   display:flex;
   margin-bottom:8px;
+  gap:8px;
+  align-items:flex-end;
 }
 .msg-row.theirs{ justify-content:flex-start; }
 .msg-row.mine{ justify-content:flex-end; }

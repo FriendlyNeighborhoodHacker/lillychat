@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   email      VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   is_admin   TINYINT(1) NOT NULL DEFAULT 0,
+  profile_photo VARCHAR(255) DEFAULT NULL,
 
   -- Invitation flow
   invite_token CHAR(64) DEFAULT NULL,

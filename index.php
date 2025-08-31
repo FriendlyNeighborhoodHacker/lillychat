@@ -42,7 +42,7 @@ if ($selectedChatId) {
     if ($isMember) {
       $st = pdo()->prepare("
         SELECT m.id, m.body, m.created_at,
-               u.id AS user_id, u.first_name, u.last_name
+               u.id AS user_id, u.first_name, u.last_name, u.profile_photo
         FROM messages m
         JOIN users u ON u.id = m.user_id
         WHERE m.chat_id = ?
@@ -153,8 +153,21 @@ header_html('Home');
             <p class="small" style="color:var(--muted);">No messages yet.</p>
           <?php else: ?>
             <?php foreach ($messages as $m): ?>
-              <?php $mine = ((int)($u['id']) === (int)($m['user_id'] ?? 0)); ?>
+              <?php
+                $mine = ((int)($u['id']) === (int)($m['user_id'] ?? 0));
+                $avatarUrl = !empty($m['profile_photo']) ? '/'.ltrim($m['profile_photo'], '/') : '';
+                $initials = strtoupper(mb_substr($m['first_name'] ?? '', 0, 1) . mb_substr($m['last_name'] ?? '', 0, 1));
+              ?>
               <div class="msg-row <?= $mine ? 'mine' : 'theirs' ?>">
+                <?php if (!$mine): ?>
+                  <div class="avatar small">
+                    <?php if ($avatarUrl): ?>
+                      <img src="<?=h($avatarUrl)?>" alt="">
+                    <?php else: ?>
+                      <span class="initials"><?=h($initials)?></span>
+                    <?php endif; ?>
+                  </div>
+                <?php endif; ?>
                 <div class="message <?= $mine ? 'mine' : 'theirs' ?>">
                   <div class="meta">
                     <span class="author"><?=h($m['first_name'].' '.$m['last_name'])?></span>
@@ -162,6 +175,15 @@ header_html('Home');
                   </div>
                   <div class="body"><?=nl2br(h($m['body']))?></div>
                 </div>
+                <?php if ($mine): ?>
+                  <div class="avatar small">
+                    <?php if ($avatarUrl): ?>
+                      <img src="<?=h($avatarUrl)?>" alt="">
+                    <?php else: ?>
+                      <span class="initials"><?=h($initials)?></span>
+                    <?php endif; ?>
+                  </div>
+                <?php endif; ?>
               </div>
             <?php endforeach; ?>
             <div id="last"></div>
