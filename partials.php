@@ -21,6 +21,7 @@ function header_html(string $title) {
     $nav .= $L('/chat_create.php','Create Chat').' | ';
     if (!empty($u['is_admin'])) {
       $nav .= $L('/admin_users.php','Users').' | ';
+      $nav .= $L('/admin_chats.php','Manage Chats').' | ';
       $nav .= $L('/admin_settings.php','Settings').' | ';
     }
     $nav .= $L('/account.php','My Profile').' | ';
