@@ -42,7 +42,7 @@ if ($selectedChatId) {
     if ($isMember) {
       $st = pdo()->prepare("
         SELECT m.id, m.body, m.created_at,
-               u.first_name, u.last_name
+               u.id AS user_id, u.first_name, u.last_name
         FROM messages m
         JOIN users u ON u.id = m.user_id
         WHERE m.chat_id = ?
@@ -140,14 +140,18 @@ header_html('Home');
             <p class="small" style="color:var(--muted);">No messages yet.</p>
           <?php else: ?>
             <?php foreach ($messages as $m): ?>
-              <div class="message">
-                <div class="meta">
-                  <span class="author"><?=h($m['first_name'].' '.$m['last_name'])?></span>
-                  <span class="time"><?=h($m['created_at'])?></span>
+              <?php $mine = ((int)($u['id']) === (int)($m['user_id'] ?? 0)); ?>
+              <div class="msg-row <?= $mine ? 'mine' : 'theirs' ?>">
+                <div class="message <?= $mine ? 'mine' : 'theirs' ?>">
+                  <div class="meta">
+                    <span class="author"><?=h($m['first_name'].' '.$m['last_name'])?></span>
+                    <span class="time"><?=h($m['created_at'])?></span>
+                  </div>
+                  <div class="body"><?=nl2br(h($m['body']))?></div>
                 </div>
               </div>
-              <div style="margin: -8px 0 8px 0; padding-left: 8px;"><?=nl2br(h($m['body']))?></div>
             <?php endforeach; ?>
+            <div id="last"></div>
           <?php endif; ?>
         <?php endif; ?>
       </div>
