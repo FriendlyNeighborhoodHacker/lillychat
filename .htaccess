@@ -1,0 +1,12 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Don’t rewrite the resizer itself
+RewriteRule ^image_resizer\.php$ - [L]
+
+# If a real file is being requested AND a width parameter is present,
+# internally route to the image resizer while preserving the original path
+# Supports ?width=NN or ?w=NN
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{QUERY_STRING} (^|&)(width|w)=([0-9]+)(&|$)
+RewriteRule ^(.*)$ image_resizer.php?path=/$1 [L,QSA]
