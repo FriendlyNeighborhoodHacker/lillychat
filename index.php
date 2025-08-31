@@ -40,16 +40,42 @@ if ($selectedChatId) {
 
     // messages (only show if member)
     if ($isMember) {
-      $st = pdo()->prepare("
-        SELECT m.id, m.body, m.created_at,
-               u.id AS user_id, u.first_name, u.last_name, u.profile_photo
-        FROM messages m
-        JOIN users u ON u.id = m.user_id
-        WHERE m.chat_id = ?
-        ORDER BY m.created_at ASC, m.id ASC
-      ");
-      $st->execute([$selectedChatId]);
-      $messages = $st->fetchAll();
+      // Fetch messages; gracefully handle if users.profile_photo doesn't exist yet
+      $messages = [];
+      try {
+        $sql = "
+          SELECT m.id, m.body, m.created_at,
+                 u.id AS user_id, u.first_name, u.last_name, u.profile_photo
+          FROM messages m
+          JOIN users u ON u.id = m.user_id
+          WHERE m.chat_id = ?
+          ORDER BY m.created_at ASC, m.id ASC
+        ";
+        $st = pdo()->prepare($sql);
+        $st->execute([$selectedChatId]);
+        $messages = $st->fetchAll();
+      } catch (PDOException $e) {
+        // Unknown column 'u.profile_photo' (error code 1054) - fallback for DBs not yet migrated
+        $code = (int)($e->errorInfo[1] ?? 0);
+        if ($code === 1054) {
+          $sql2 = "
+            SELECT m.id, m.body, m.created_at,
+                   u.id AS user_id, u.first_name, u.last_name
+            FROM messages m
+            JOIN users u ON u.id = m.user_id
+            WHERE m.chat_id = ?
+            ORDER BY m.created_at ASC, m.id ASC
+          ";
+          $st2 = pdo()->prepare($sql2);
+          $st2->execute([$selectedChatId]);
+          $messages = $st2->fetchAll();
+          // Ensure profile_photo key exists (null) for renderer
+          foreach ($messages as &$mm) { if (!array_key_exists('profile_photo', $mm)) $mm['profile_photo'] = null; }
+          unset($mm);
+        } else {
+          throw $e;
+        }
+      }
 
       // Also fetch chat members for the Members modal (shown to members)
       $chatMembers = [];
@@ -156,7 +182,7 @@ header_html('Home');
               <?php
                 $mine = ((int)($u['id']) === (int)($m['user_id'] ?? 0));
                 $avatarUrl = !empty($m['profile_photo']) ? '/'.ltrim($m['profile_photo'], '/') : '';
-                $initials = strtoupper(mb_substr($m['first_name'] ?? '', 0, 1) . mb_substr($m['last_name'] ?? '', 0, 1));
+                $initials = initials($m['first_name'] ?? '', $m['last_name'] ?? '');
               ?>
               <div class="msg-row <?= $mine ? 'mine' : 'theirs' ?>">
                 <?php if (!$mine): ?>

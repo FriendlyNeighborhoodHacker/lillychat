@@ -2,6 +2,20 @@
 require_once __DIR__ . '/auth.php';
 
 function h($s){ return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8'); }
+function initials(string $first = '', string $last = ''): string {
+  $f = $first ?? '';
+  $l = $last ?? '';
+  if (function_exists('mb_substr')) {
+    $fi = mb_substr($f, 0, 1);
+    $li = mb_substr($l, 0, 1);
+    $up = function_exists('mb_strtoupper') ? 'mb_strtoupper' : 'strtoupper';
+    return $up($fi . $li);
+  } else {
+    $fi = substr($f, 0, 1);
+    $li = substr($l, 0, 1);
+    return strtoupper($fi . $li);
+  }
+}
 
 function header_html(string $title) {
   $u = current_user();

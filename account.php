@@ -109,7 +109,7 @@ header_html('My Profile');
     <input type="hidden" name="csrf" value="<?=h(csrf_token())?>">
     <?php
       $avatarUrl = !empty($u['profile_photo']) ? '/'.ltrim($u['profile_photo'], '/') : '';
-      $initials = strtoupper(mb_substr($u['first_name'] ?? '', 0, 1) . mb_substr($u['last_name'] ?? '', 0, 1));
+      $initials = initials($u['first_name'] ?? '', $u['last_name'] ?? '');
     ?>
     <div style="display:flex; align-items:center; gap:12px; margin: 6px 0 2px;">
       <div class="avatar large">
