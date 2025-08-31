@@ -277,6 +277,10 @@ button:active, .button:active{ transform: translateY(1px); }
   margin-left: 8px;
   font-size: 0.82rem;
 }
+/* Make own-message timestamp black for strong contrast on warm bubble */
+.message.mine .time{
+  color: #000;
+}
 .message .body{
   color: inherit;
 }
