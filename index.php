@@ -80,7 +80,7 @@ if ($selectedChatId) {
       // Also fetch chat members for the Members modal (shown to members)
       $chatMembers = [];
       $st = pdo()->prepare("
-        SELECT u.id, u.first_name, u.last_name, u.email, cm.is_owner
+        SELECT u.id, u.first_name, u.last_name, u.email, u.profile_photo, cm.is_owner
         FROM chat_members cm
         JOIN users u ON u.id = cm.user_id
         WHERE cm.chat_id = ?
@@ -188,7 +188,7 @@ header_html('Home');
                 <?php if (!$mine): ?>
                   <div class="avatar small">
                     <?php if ($avatarUrl): ?>
-                      <img src="<?=h($avatarUrl)?>" alt="">
+                      <img src="<?=h($avatarUrl)?>?width=32" alt="">
                     <?php else: ?>
                       <span class="initials"><?=h($initials)?></span>
                     <?php endif; ?>
@@ -204,7 +204,7 @@ header_html('Home');
                 <?php if ($mine): ?>
                   <div class="avatar small">
                     <?php if ($avatarUrl): ?>
-                      <img src="<?=h($avatarUrl)?>" alt="">
+                      <img src="<?=h($avatarUrl)?>?width=32" alt="">
                     <?php else: ?>
                       <span class="initials"><?=h($initials)?></span>
                     <?php endif; ?>
@@ -244,9 +244,22 @@ header_html('Home');
         <ul class="members-list" style="list-style:none; margin:0; padding:0;">
           <?php foreach ($chatMembers as $cm): ?>
             <li style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-              <div>
-                <div style="font-weight:600;"><?=h($cm['first_name'].' '.$cm['last_name'])?></div>
-                <div class="small" style="color:var(--muted)"><?=h($cm['email'])?></div>
+              <?php
+                $mAvatarUrl = !empty($cm['profile_photo']) ? '/'.ltrim($cm['profile_photo'], '/') : '';
+                $mInitials = initials($cm['first_name'] ?? '', $cm['last_name'] ?? '');
+              ?>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="avatar small">
+                  <?php if ($mAvatarUrl): ?>
+                    <img src="<?=h($mAvatarUrl)?>?width=32" alt="">
+                  <?php else: ?>
+                    <span class="initials"><?=h($mInitials)?></span>
+                  <?php endif; ?>
+                </div>
+                <div>
+                  <div style="font-weight:600;"><?=h($cm['first_name'].' '.$cm['last_name'])?></div>
+                  <div class="small" style="color:var(--muted)"><?=h($cm['email'])?></div>
+                </div>
               </div>
               <?php if (!empty($cm['is_owner'])): ?>
                 <span class="badge" style="background:rgba(255,122,24,0.2); color:var(--accent-3); padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,0.08);">Owner</span>
