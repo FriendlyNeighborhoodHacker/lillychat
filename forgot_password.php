@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/partials.php';
+require_once __DIR__.'/mailer.php';
 
 if (current_user()) { header('Location: /index.php'); exit; }
 
