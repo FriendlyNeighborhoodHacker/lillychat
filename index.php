@@ -188,7 +188,7 @@ header_html('Home');
                 <?php if (!$mine): ?>
                   <div class="avatar small">
                     <?php if ($avatarUrl): ?>
-                      <img src="<?=h($avatarUrl)?>?width=32" alt="">
+                      <img src="<?=h($avatarUrl)?>" alt="" width="32" height="32">
                     <?php else: ?>
                       <span class="initials"><?=h($initials)?></span>
                     <?php endif; ?>
@@ -204,7 +204,7 @@ header_html('Home');
                 <?php if ($mine): ?>
                   <div class="avatar small">
                     <?php if ($avatarUrl): ?>
-                      <img src="<?=h($avatarUrl)?>?width=32" alt="">
+                      <img src="<?=h($avatarUrl)?>" alt="" width="32" height="32">
                     <?php else: ?>
                       <span class="initials"><?=h($initials)?></span>
                     <?php endif; ?>
@@ -251,7 +251,7 @@ header_html('Home');
               <div style="display:flex; align-items:center; gap:10px;">
                 <div class="avatar small">
                   <?php if ($mAvatarUrl): ?>
-                    <img src="<?=h($mAvatarUrl)?>?width=32" alt="">
+                    <img src="<?=h($mAvatarUrl)?>" alt="" width="32" height="32">
                   <?php else: ?>
                     <span class="initials"><?=h($mInitials)?></span>
                   <?php endif; ?>

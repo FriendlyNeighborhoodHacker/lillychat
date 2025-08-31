@@ -114,7 +114,7 @@ header_html('My Profile');
     <div style="display:flex; align-items:center; gap:12px; margin: 6px 0 2px;">
       <div class="avatar large">
         <?php if ($avatarUrl): ?>
-          <img src="<?=h($avatarUrl)?>?width=72" alt="">
+          <img src="<?=h($avatarUrl)?>" alt="" width="72" height="72">
         <?php else: ?>
           <span class="initials"><?=h($initials)?></span>
         <?php endif; ?>

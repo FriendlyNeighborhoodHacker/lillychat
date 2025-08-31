@@ -81,7 +81,7 @@ if (!is_dir($cacheDir)) {
 $srcMtime = (int)@filemtime($srcAbs);
 $cacheMtime = is_file($cacheAbs) ? (int)@filemtime($cacheAbs) : 0;
 if ($cacheMtime >= $srcMtime && $cacheMtime > 0) {
-  return streamImage($cacheAbs, $mimeFromExt($cacheAbs), $srcMtime, true);
+  return streamImage($cacheAbs, mimeFromExt($cacheAbs), $srcMtime, true);
 }
 
 // Load source
@@ -154,7 +154,7 @@ if (!$ok) {
 @rename($tmp, $cacheAbs);
 
 // Serve cached file
-return streamImage($cacheAbs, $mimeFromExt($cacheAbs) ?: $outMime, $srcMtime, false);
+return streamImage($cacheAbs, mimeFromExt($cacheAbs) ?: $outMime, $srcMtime, false);
 
 // -------------- Helpers ----------------
 
