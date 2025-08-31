@@ -323,3 +323,47 @@ hr{
   border-top: 1px solid rgba(255,255,255,0.08);
   margin: 14px 0;
 }
+
+/* Modal (Members) */
+.hidden{ display:none !important; }
+
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-card{
+  width: min(92vw, 560px);
+  background: linear-gradient(180deg, rgba(28,20,48,0.97), rgba(24,18,42,0.92));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.modal-header{
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(90deg, rgba(255,61,129,0.12), transparent);
+}
+
+.modal-body{
+  padding: 12px 14px;
+  max-height: 60vh;
+  overflow:auto;
+}
+
+.badge{
+  display:inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}

@@ -50,6 +50,18 @@ if ($selectedChatId) {
       ");
       $st->execute([$selectedChatId]);
       $messages = $st->fetchAll();
+
+      // Also fetch chat members for the Members modal (shown to members)
+      $chatMembers = [];
+      $st = pdo()->prepare("
+        SELECT u.id, u.first_name, u.last_name, u.email, cm.is_owner
+        FROM chat_members cm
+        JOIN users u ON u.id = cm.user_id
+        WHERE cm.chat_id = ?
+        ORDER BY u.last_name, u.first_name
+      ");
+      $st->execute([$selectedChatId]);
+      $chatMembers = $st->fetchAll();
     }
   }
 }
@@ -105,6 +117,7 @@ header_html('Home');
         </div>
         <div style="display:flex; gap:8px;">
           <?php if ($isMember): ?>
+            <button type="button" class="button secondary" id="open-members">Members</button>
             <form method="post" action="/chat_leave.php">
               <input type="hidden" name="csrf" value="<?=h(csrf_token())?>">
               <input type="hidden" name="chat_id" value="<?=h((string)$chat['id'])?>">
@@ -172,5 +185,30 @@ header_html('Home');
     <?php endif; ?>
   </section>
 
+<?php if (!empty($chat) && !empty($isMember) && !empty($chatMembers)): ?>
+  <div id="members-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <strong>Members (<?= count($chatMembers) ?>)</strong>
+        <button type="button" class="button secondary close-modal" id="close-members">Close</button>
+      </div>
+      <div class="modal-body">
+        <ul class="members-list" style="list-style:none; margin:0; padding:0;">
+          <?php foreach ($chatMembers as $cm): ?>
+            <li style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <div style="font-weight:600;"><?=h($cm['first_name'].' '.$cm['last_name'])?></div>
+                <div class="small" style="color:var(--muted)"><?=h($cm['email'])?></div>
+              </div>
+              <?php if (!empty($cm['is_owner'])): ?>
+                <span class="badge" style="background:rgba(255,122,24,0.2); color:var(--accent-3); padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,0.08);">Owner</span>
+              <?php endif; ?>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
 </div>
 <?php footer_html(); ?>
