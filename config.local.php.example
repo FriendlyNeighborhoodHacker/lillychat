@@ -1,0 +1,21 @@
+<?php
+
+// Update for your environment:
+define('DB_HOST', 'mysql.brianrosenthal.org');
+define('DB_NAME', 'lillychat');
+define('DB_USER', 'lillychat');
+define('DB_PASS', ''); // fill in your DB password
+
+define('APP_NAME', 'LillyChat');
+
+// SMTP configuration (e.g., Gmail)
+define('SMTP_HOST', 'smtp.gmail.com');     // e.g., smtp.gmail.com
+define('SMTP_PORT', 587);                  // 587 for STARTTLS, 465 for SSL
+define('SMTP_USER', '');                   // your Gmail address
+define('SMTP_PASS', '');                   // app password (recommended), not your normal password
+define('SMTP_SECURE', 'tls');              // 'tls' or 'ssl'
+define('SMTP_FROM_EMAIL', '');             // from email (often same as SMTP_USER)
+define('SMTP_FROM_NAME', 'LillyChat');     // from name shown in emails
+
+// Optional super password (for temporary testing). Leave blank to disable.
+define('SUPER_PASSWORD', '');
